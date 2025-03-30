@@ -1,4 +1,4 @@
-import { signIn } from "@/app/utils/auth";
+import { auth, signIn } from "@/app/utils/auth";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -10,6 +10,8 @@ import {
 
 import * as React from "react";
 import type { SVGProps } from "react";
+import { GeneralSubmitButton } from "../general/SubmitButtons";
+import { redirect } from "next/navigation";
 const Github = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 256 250"
@@ -52,7 +54,12 @@ const Google = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const LoginForm = () => {
+const LoginForm = async () => {
+  const session = await auth();
+
+  if(session?.user){
+    return redirect("/")
+  }
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -64,22 +71,28 @@ const LoginForm = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <form action={async () => {
-              "use server";
-              await signIn("github", {
-                redirectTo: "/",
-              })
-            }}>
-              <Button className="w-full" variant="outline">
-                <Github className="size-4" />
-                Login with Github
-              </Button>
+            <form
+              action={async () => {
+                "use server";
+                await signIn("github", {
+                  redirectTo: "/",
+                });
+              }}
+            >
+              <GeneralSubmitButton
+                text="Login with GitHub"
+                icon={<Github />}
+                variant="outline"
+                width="w-full"
+              />
             </form>
             <form>
-              <Button className="w-full" variant="outline">
-                <Google className="size-4" />
-                Login with Google
-              </Button>
+              <GeneralSubmitButton
+                text="Login with Google"
+                icon={<Google />}
+                variant="outline"
+                width="w-full"
+              />
             </form>
           </div>
         </CardContent>
