@@ -119,6 +119,23 @@ const CompanyForm = () => {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="about"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>About</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Tell us about your company..."
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </form>
     </Form>
   );
