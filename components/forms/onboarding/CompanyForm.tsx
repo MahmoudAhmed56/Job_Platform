@@ -1,6 +1,6 @@
 "use client";
 
-import { countryList } from "@/app/utils/countriesList";
+import { countryList, getFlagEmoji } from "@/app/utils/countriesList";
 import {
   Form,
   FormControl,
@@ -79,13 +79,28 @@ const CompanyForm = () => {
                       <SelectLabel>Location</SelectLabel>
                       {countryList.map((country) => (
                         <SelectItem value={country.name} key={country.code}>
-                          <span>{country.flagEmoji}</span>
+                          <span>{getFlagEmoji(country.name)}</span>
                           <span className="pl-2">{country.name}</span>
                         </SelectItem>
                       ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website</FormLabel>
+                <FormControl>
+                  <Input placeholder="https://your-company.com" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
