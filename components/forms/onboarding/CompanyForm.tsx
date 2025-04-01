@@ -105,6 +105,19 @@ const CompanyForm = () => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="xAccount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>X (Twitter) Account</FormLabel>
+                <FormControl>
+                  <Input placeholder="@yourcompany" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </form>
     </Form>
