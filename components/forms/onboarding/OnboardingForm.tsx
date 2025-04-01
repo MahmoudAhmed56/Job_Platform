@@ -3,6 +3,7 @@ import Image from "next/image";
 import Logo from "@/public/logo.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
+import UserTypeSelection from "./UserTypeselection";
 
 type UserSelectionType = "company" | "jobSeeker" | null;
 
@@ -18,7 +19,7 @@ const OnboardingForm = () => {
   function renderStep() {
     switch (step) {
       case 1:
-        return <p>user type selection form</p>;
+        return <UserTypeSelection onSelect={handelUserTypeSelection} />
       case 2:
         return userType === "company" ? (
           <p>user is a company</p>
