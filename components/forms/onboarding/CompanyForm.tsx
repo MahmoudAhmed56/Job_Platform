@@ -1,6 +1,7 @@
 "use client";
 
 import { countryList, getFlagEmoji } from "@/app/utils/countriesList";
+import { UploadDropzone } from "@/components/general/UploadThingReExport";
 import {
   Form,
   FormControl,
@@ -93,7 +94,7 @@ const CompanyForm = () => {
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
+          <FormField
             control={form.control}
             name="website"
             render={({ field }) => (
@@ -131,6 +132,28 @@ const CompanyForm = () => {
                   placeholder="Tell us about your company..."
                   className="resize-none"
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Logo</FormLabel>
+              <FormControl>
+                <UploadDropzone
+                  endpoint={"imageUploader"}
+                  onClientUploadComplete={(res) => {
+                    field.onChange(res[0].ufsUrl);
+                  }}
+                  onUploadError={() => {
+                    console.log("something went wrong");
+                  }}
+                  className="ut-button:bg-primary ut-button:text-white ut-button:hover:bg-primary/90 ut-label:text-muted-foreground ut-allowed-content:text-muted-foreground border-primary"
                 />
               </FormControl>
               <FormMessage />
