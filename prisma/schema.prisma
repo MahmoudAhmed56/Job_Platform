@@ -23,13 +23,20 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  onboardingCompleted Boolean    @default(false)
-  
-  company             Company?
-  JobSeeker           JobSeeker?
+  userType userType?
+
+  onboardingCompleted Boolean @default(false)
+
+  company   Company?
+  JobSeeker JobSeeker?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum userType {
+  COMPANY
+  jOB_SEEKER
 }
 
 model Company {
