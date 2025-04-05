@@ -19,6 +19,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import PDFImage from "@/public/pdf.png";
+import { createJobSeeker } from "@/app/actions";
+import { useState } from "react";
 
 const JobSeekerForm = () => {
   const form = useForm<z.infer<typeof jobSeekerSchema>>({
@@ -29,9 +31,22 @@ const JobSeekerForm = () => {
       resume: "",
     },
   });
+  const [pending, setPending] = useState<boolean>(false);
+  async function onSubmit(values: z.infer<typeof jobSeekerSchema>) {
+    try {
+      setPending(true);
+      await createJobSeeker(values);
+    } catch (error) {
+      if (error instanceof Error && error.message !== "NEXT_REDIRECT") {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } finally {
+      setPending(false);
+    }
+  }
   return (
     <Form {...form}>
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -108,6 +123,9 @@ const JobSeekerForm = () => {
             </FormItem>
           )}
         />
+        <Button type="submit" className="w-full" disabled={pending}>
+          {pending ? "Submitting..." : "Continue"}
+        </Button>
       </form>
     </Form>
   );
