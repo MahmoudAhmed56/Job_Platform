@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import ArcJetLogo from "@/public/arcjet.jpg";
 import InngestLogo from "@/public/inngest-locale.png";
+import CreateJobForm from "@/components/forms/CreateJobForm";
 
 const companies = [
   { id: 0, name: "ArcJet", logo: ArcJetLogo },
@@ -50,6 +51,7 @@ const stats = [
 const PostJobPage = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
+      <CreateJobForm />
       <div className="col-span-1">
         <Card className="lg:sticky lg:top-4">
           <CardHeader>
