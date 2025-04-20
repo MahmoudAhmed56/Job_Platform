@@ -1,15 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { jobSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { countryList } from "@/app/utils/countriesList";
 import SalaryRangeSelector from "../general/SalaryRangeSelector";
 import JobDescriptionEditor from "../richTextEditor/JobDescriptionEditor";
+import BenefitsSelector from "../general/BenefitsSelector";
 
 const CreateJobForm = () => {
   const form = useForm<z.infer<typeof jobSchema>>({
@@ -139,18 +156,31 @@ const CreateJobForm = () => {
                 </FormMessage>
               </FormItem>
             </div>
-            <FormField 
-            control={form.control}
-            name="jobDescription"
-            render={({field})=>(
-              <FormItem>
-                <FormLabel>Job Description</FormLabel>
-                <FormControl>
-                  <JobDescriptionEditor field={field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            <FormField
+              control={form.control}
+              name="jobDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Job Description</FormLabel>
+                  <FormControl>
+                    <JobDescriptionEditor field={field as any} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="benefits"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Benefits</FormLabel>
+                  <FormControl>
+                    <BenefitsSelector field={field as any} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </CardContent>
         </Card>
