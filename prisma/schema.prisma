@@ -25,6 +25,8 @@ model User {
 
   userType userType?
 
+  stripeCustomerId String?
+
   onboardingCompleted Boolean @default(false)
 
   company   Company?
