@@ -34,30 +34,60 @@ import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
 import { UploadDropzone } from "../general/UploadThingReExport";
 import JobListingDurationSelector from "../general/JobListingDurationSelector";
+import { useState } from "react";
 
-const CreateJobForm = () => {
+interface CreateJobFormProps {
+  companyName: string;
+  companyLocation: string;
+  companyAbout: string;
+  companyLogo: string;
+  companyXAccount: string | null;
+  companyWebsite: string;
+}
+
+const CreateJobForm = ({
+  companyAbout,
+  companyLocation,
+  companyLogo,
+  companyXAccount,
+  companyName,
+  companyWebsite,
+}: CreateJobFormProps) => {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
-    defaultValues: {
+    defaultValues:  {
       benefits: [],
-      companyDescription: "",
-      companyLocation: "",
-      companyName: "",
-      companyWebsite: "",
-      companyXAccount: "",
+      companyDescription: companyAbout,
+      companyLocation: companyLocation,
+      companyName: companyName,
+      companyWebsite: companyWebsite,
+      companyXAccount: companyXAccount || "",
       employmentType: "",
       jobDescription: "",
       jobTitle: "",
       location: "",
       salaryFrom: 0,
       salaryTo: 0,
-      companyLogo: "",
+      companyLogo: companyLogo,
       listingDuration: 30,
     },
   });
+  const [pending, setPending] = useState<boolean>(false);
+  async function onSubmit() {
+    try {
+      setPending(true);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
   return (
     <Form {...form}>
-      <form className="col-span-1   lg:col-span-2  flex flex-col gap-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="col-span-1   lg:col-span-2  flex flex-col gap-8"
+      >
         <Card>
           <CardHeader>
             <CardTitle>Job Information</CardTitle>
@@ -386,6 +416,9 @@ const CreateJobForm = () => {
             />
           </CardContent>
         </Card>
+        <Button type="submit" className="w-full" disabled={pending}>
+          {pending ? "Submitting..." : "Continue"}
+        </Button>
       </form>
     </Form>
   );
