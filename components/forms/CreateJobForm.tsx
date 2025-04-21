@@ -33,6 +33,7 @@ import { XIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
 import { UploadDropzone } from "../general/UploadThingReExport";
+import JobListingDurationSelector from "../general/JobListingDurationSelector";
 
 const CreateJobForm = () => {
   const form = useForm<z.infer<typeof jobSchema>>({
@@ -345,7 +346,7 @@ const CreateJobForm = () => {
                         </div>
                       ) : (
                         <UploadDropzone
-                        className="cursor-pointer"
+                          className="cursor-pointer"
                           endpoint="imageUploader"
                           onClientUploadComplete={(res) => {
                             field.onChange(res[0].ufsUrl);
@@ -359,6 +360,25 @@ const CreateJobForm = () => {
                         />
                       )}
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Job Listing Duration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FormField
+              control={form.control}
+              name="listingDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <JobListingDurationSelector field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
