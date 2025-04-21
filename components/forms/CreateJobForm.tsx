@@ -419,8 +419,24 @@ const CreateJobForm = ({
           </CardContent>
         </Card>
         <Button type="submit" className="w-full" disabled={pending}>
-          {pending ? "Submitting..." : "Continue"}
+          {pending ? "Submitting..." : "Create Job Post"}
         </Button>
+        {Object.keys(form.formState.errors).length > 0 && (
+          <div className="rounded-lg bg-destructive/10 p-4 text-destructive dark:bg-destructive/20">
+            <h3 className="mb-2 font-medium">
+              Please fix the following errors:
+            </h3>
+            <ul className="list-disc space-y-1 pl-4">
+              {Object.entries(form.formState.errors).map(
+                ([fieldName, error]) => (
+                  <li key={fieldName}>
+                    {error.message?.toString() || `Invalid ${fieldName}`}
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        )}
       </form>
     </Form>
   );

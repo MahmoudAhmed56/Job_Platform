@@ -139,24 +139,25 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   if (!pricingTier) {
     throw new Error("Invalid listing duration selected");
   }
+  const isFreeTier = pricingTier === jobListingDurationPricing[0];
 
   const session = await stripe.checkout.sessions.create({
     customer: stripeCustomerId,
-    line_items:[
+    line_items: [
       {
-        price_data:{
-          product_data:{
+        price_data: {
+          product_data: {
             name: `Job Posting - ${pricingTier.days} Days`,
             description: pricingTier.description,
-            images:[
-              "https://e3vjorsq2d.ufs.sh/f/W7yr2XXPC0tAX5RgfGGSO3EmdSgsHYNRj5FVWfUL0T4zMhAZ"
-            ]
+            images: [
+              "https://e3vjorsq2d.ufs.sh/f/W7yr2XXPC0tAX5RgfGGSO3EmdSgsHYNRj5FVWfUL0T4zMhAZ",
+            ],
           },
           currency: "USD",
           unit_amount: pricingTier.price * 100, // Convert to cents for Stripe
         },
         quantity: 1,
-      }
+      },
     ],
     mode: "payment",
     metadata: {
@@ -164,7 +165,10 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     },
     success_url: `${process.env.NEXT_PUBLIC_URL}/payment/success`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment/cancel`,
-  })
+  });
 
+  if (isFreeTier) {
+    return redirect(`/`);
+  }
   return redirect(session.url as string);
 }
