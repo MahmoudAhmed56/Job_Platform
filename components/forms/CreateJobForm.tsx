@@ -35,6 +35,7 @@ import { Textarea } from "../ui/textarea";
 import { UploadDropzone } from "../general/UploadThingReExport";
 import JobListingDurationSelector from "../general/JobListingDurationSelector";
 import { useState } from "react";
+import { createJob } from "@/app/actions";
 
 interface CreateJobFormProps {
   companyName: string;
@@ -55,7 +56,7 @@ const CreateJobForm = ({
 }: CreateJobFormProps) => {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
-    defaultValues:  {
+    defaultValues: {
       benefits: [],
       companyDescription: companyAbout,
       companyLocation: companyLocation,
@@ -73,9 +74,10 @@ const CreateJobForm = ({
     },
   });
   const [pending, setPending] = useState<boolean>(false);
-  async function onSubmit() {
+  async function onSubmit(values: z.infer<typeof jobSchema>) {
     try {
       setPending(true);
+      await createJob(values);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
