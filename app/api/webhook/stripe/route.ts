@@ -45,10 +45,7 @@ export async function POST(req: Request) {
     await prisma.jobPost.update({
       where: {
         id: jobId,
-        Company: {
-          userId: user.id, // Ensure the job's company belongs to the user
-        },
-        // userId: user.id, // Ensure the job belongs to the user
+        companyId: user.id, // Ensure the job belongs to the user
       },
       data: {
         status: "ACTIVE",
