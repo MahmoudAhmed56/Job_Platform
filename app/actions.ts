@@ -9,6 +9,7 @@ import arcjet, { detectBot, shield } from "./utils/arcjet";
 import { request } from "@arcjet/next";
 import { stripe } from "./utils/stripe";
 import { jobListingDurationPricing } from "./utils/pricingTiers";
+import { inngest } from "./utils/inngest/client";
 
 const aj = arcjet.withRule(shield({})).withRule(
   detectBot({
@@ -135,6 +136,15 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
       id: true,
     },
   });
+    // Trigger the job expiration function
+    await inngest.send({
+      name: "job/created",
+      data: {
+        jobId: jobPost.id,
+        expirationDays: validatedData.listingDuration,
+      },
+    });
+  
 
   const pricingTier = jobListingDurationPricing.find(
     (tier) => tier.days === validatedData.listingDuration
