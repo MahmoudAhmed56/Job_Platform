@@ -188,7 +188,9 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
 }
 export async function saveJobPost(jobId: string) {
   const user = await requireUser();
-
+  if (!user) {
+    throw new Error('User must be authenticated to unsave job posts');
+  }
   await prisma.savedJobPost.create({
     data: {
       jobId: jobId,
