@@ -200,7 +200,9 @@ export async function saveJobPost(jobId: string) {
 }
 export async function unsaveJobPost(savedJobPostId: string) {
   const user = await requireUser();
-
+  if (!user) {
+    throw new Error('User must be authenticated to unsave job posts');
+  }
   const data = await prisma.savedJobPost.delete({
     where: {
       id: savedJobPostId,
