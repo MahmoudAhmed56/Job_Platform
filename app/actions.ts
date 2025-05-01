@@ -185,3 +185,15 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   }
   return redirect(session.url as string);
 }
+export async function saveJobPost(jobId: string) {
+  const user = await requireUser();
+
+  await prisma.savedJobPost.create({
+    data: {
+      jobId: jobId,
+      userId: user.id as string,
+    },
+  });
+
+  revalidatePath(`/job/${jobId}`);
+}
