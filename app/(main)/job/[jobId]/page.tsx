@@ -13,7 +13,7 @@ import {
   SaveJobButton,
 } from "@/components/general/SubmitButtons";
 import { getFlagEmoji } from "@/app/utils/countriesList";
-import { JsonToHtml } from "@/components/general/JsonToHtml";
+import JsonToHtml from "@/components/general/JsonToHtml";
 import { saveJobPost, unsaveJobPost } from "@/app/actions";
 import arcjet, { detectBot } from "@/app/utils/arcjet";
 import { request } from "@arcjet/next";
