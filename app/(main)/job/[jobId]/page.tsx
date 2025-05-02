@@ -15,7 +15,7 @@ import {
 import { getFlagEmoji } from "@/app/utils/countriesList";
 import JsonToHtml from "@/components/general/JsonToHtml";
 import { saveJobPost, unsaveJobPost } from "@/app/actions";
-import arcjet, { detectBot } from "@/app/utils/arcjet";
+import arcjet, { detectBot, tokenBucket } from "@/app/utils/arcjet";
 import { request } from "@arcjet/next";
 import { prisma } from "@/lib/prisma";
 
@@ -25,6 +25,28 @@ const aj = arcjet.withRule(
     allow: ["CATEGORY:SEARCH_ENGINE", "CATEGORY:PREVIEW"],
   })
 );
+
+function getClient(session: boolean) {
+  if (session) {
+    return aj.withRule(
+      tokenBucket({
+        mode: "LIVE",
+        capacity: 100,
+        interval: 60,
+        refillRate: 30,
+      })
+    );
+  }else{
+    return aj.withRule(
+      tokenBucket({
+        mode: "LIVE",
+        capacity: 100,
+        interval: 60,
+        refillRate: 30,
+      })
+    );
+  }
+}
 
 async function getJob(jobId: string, userId?: string) {
   const [jobData, savedJob] = await Promise.all([
@@ -85,13 +107,12 @@ const JobIdPage = async ({ params }: { params: Params }) => {
   const { jobId } = await params;
   const req = await request();
 
-  const decision = await aj.protect(req);
-
+  const session = await auth();
+  const decision = await getClient(!!session).protect(req,{requested: 10})
   if (decision.isDenied()) {
     throw new Error("forbidden");
   }
 
-  const session = await auth();
   const { jobData, savedJob } = await getJob(jobId, session?.user?.id);
   const locationFlag = getFlagEmoji(jobData.location);
 
