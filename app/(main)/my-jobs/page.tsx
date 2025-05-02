@@ -28,6 +28,7 @@ import Link from "next/link";
 import EmptyState from "@/components/general/EmptyState";
 import { requireUser } from "@/app/utils/requireUser";
 import { prisma } from "@/lib/prisma";
+import { CopyLinkMenuItem } from "@/components/general/CopyLinkMenuItem";
 
 
 async function getJobs(userId: string) {
