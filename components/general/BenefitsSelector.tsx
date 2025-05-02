@@ -1,11 +1,12 @@
 import { benefits } from "@/app/utils/listOfBenefits";
 import { Badge } from "../ui/badge";
 import { ControllerRenderProps } from "react-hook-form";
+import { z } from "zod";
+import { jobSchema } from "@/lib/validation";
 
 interface BenefitsSelectorProps {
-  field: ControllerRenderProps;
+  field: ControllerRenderProps<z.infer<typeof jobSchema>, "benefits">;
 }
-
 const BenefitsSelector = ({ field }: BenefitsSelectorProps) => {
   const toggleBenefit = (benefitId: string) => {
     const currentBenefits = field.value || [];

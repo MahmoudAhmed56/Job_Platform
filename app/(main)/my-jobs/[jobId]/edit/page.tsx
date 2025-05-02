@@ -1,5 +1,7 @@
-import { requireUser } from "@/app/utils/hooks";
+import { requireUser } from "@/app/utils/requireUser";
 import { EditJobForm } from "@/components/forms/EditJobForm";
+import { prisma } from "@/lib/prisma";
+// import { EditJobForm } from "@/components/forms/EditJobForm";
 
 import { notFound } from "next/navigation";
 import React from "react";
@@ -53,6 +55,9 @@ type Params = Promise<{ jobId: string }>;
 const EditJobPage = async ({ params }: { params: Params }) => {
   const { jobId } = await params;
   const user = await requireUser();
+  if (!user) {
+    throw new Error('User must be authenticated to unsave job posts');
+  }
   const jobPost = await getJobPost({ jobId, userId: user.id as string });
 
   if (!jobPost) {

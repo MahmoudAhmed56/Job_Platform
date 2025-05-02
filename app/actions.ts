@@ -233,3 +233,34 @@ export async function deleteJobPost(jobId: string) {
 
   return redirect("/my-jobs");
 }
+export async function updateJobPost(
+  data: z.infer<typeof jobSchema>,
+  jobId: string
+) {
+  const user = await requireUser();
+  if (!user) {
+    throw new Error('User must be authenticated to unsave job posts');
+  }
+  const validatedData = jobSchema.parse(data);
+
+  await prisma.jobPost.update({
+    where: {
+      id: jobId,
+      company: {
+        userId: user.id,
+      },
+    },
+    data: {
+      jobDescription: validatedData.jobDescription,
+      jobTitle: validatedData.jobTitle,
+      employmentType: validatedData.employmentType,
+      location: validatedData.location,
+      salaryFrom: validatedData.salaryFrom,
+      salaryTo: validatedData.salaryTo,
+      listingDuration: validatedData.listingDuration,
+      benefits: validatedData.benefits,
+    },
+  });
+
+  return redirect("/my-jobs");
+}
