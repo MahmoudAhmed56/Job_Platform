@@ -79,7 +79,7 @@ export function JobFilter() {
   };
 
   return (
-    <Card className="col-span-1 h-fit">
+    <Card className="col-span-1 h-fit w-full">
       <CardHeader className="space-y-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-2xl font-semibold">Filter</CardTitle>

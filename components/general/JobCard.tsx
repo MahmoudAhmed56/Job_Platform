@@ -28,7 +28,7 @@ interface iAppProps {
 const JobCard = ({ job }: iAppProps) => {
   return (
     <Link href={`/job/${job.id}`}>
-      <Card className="hover:shadow-lg transition-all duration-300 hover:border-primary relative">
+      <Card className="hover:shadow-lg transition-all duration-300 hover:border-primary relative w-full">
         <CardHeader>
           <div className="flex flex-col md:flex-row gap-4">
             {job.company.logo ? (

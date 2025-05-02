@@ -26,7 +26,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
   )};location=${location}`;
 
   return (
-    <div className="grid grid-cols-3 gap-8">
+    <div className="flex flex-wrap md:grid md:grid-cols-3 gap-8">
       <JobFilter />
       <div className="col-span-2 flex flex-col gap-6">
         <Suspense key={filterKey} fallback={<JobListingsLoading />}>
