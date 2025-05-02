@@ -217,3 +217,19 @@ export async function unsaveJobPost(savedJobPostId: string) {
 
   revalidatePath(`/job/${data.jobId}`);
 }
+export async function deleteJobPost(jobId: string) {
+  const user = await requireUser();
+  if (!user) {
+    throw new Error('User must be authenticated to unsave job posts');
+  }
+  await prisma.jobPost.delete({
+    where: {
+      id: jobId,
+      company: {
+        userId: user.id,
+      },
+    },
+  });
+
+  return redirect("/my-jobs");
+}
