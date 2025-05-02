@@ -8,17 +8,17 @@ export const jobListingDurationPricing: iAppProps[] = [
   {
     days: 15,
     price: 0,
-    description: "Free tier",
+    description: "Free trail",
   },
   {
     days: 30,
-    price: 99,
-    description: "Standard listing",
+    price: 0,
+    description: "Free trail",
   },
   {
     days: 60,
-    price: 179,
-    description: "Extended visibility",
+    price: 0,
+    description: "Free trail",
   },
   {
     days: 90,

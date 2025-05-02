@@ -6,13 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
+import React from "react";
 import ArcJetLogo from "@/public/arcjet.jpg";
 import InngestLogo from "@/public/inngest-locale.png";
-import CreateJobForm from "@/components/forms/CreateJobForm";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/app/utils/requireUser";
+// import CreateJobForm from "@/components/forms/CreateJobForm";
 import { prisma } from "@/lib/prisma";
+import { CreateJobForm } from "@/components/forms/CreateJobForm";
 
 const companies = [
   { id: 0, name: "ArcJet", logo: ArcJetLogo },
@@ -50,6 +52,7 @@ const stats = [
   { value: "95%", label: "Employer satisfaction rate" },
   { value: "500+", label: "Companies hiring monthly" },
 ];
+
 async function getCompany(userId: string) {
   const data = await prisma.company.findUnique({
     where: {
@@ -70,11 +73,12 @@ async function getCompany(userId: string) {
   }
   return data;
 }
+
 const PostJobPage = async () => {
   const session = await requireUser();
   if (!session) {
-    return redirect("/");
-  }
+      redirect("/login");
+    }
   const data = await getCompany(session.id as string);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
@@ -86,6 +90,7 @@ const PostJobPage = async () => {
         companyXAccount={data.xAccount}
         companyWebsite={data.website}
       />
+
       <div className="col-span-1">
         <Card className="lg:sticky lg:top-4">
           <CardHeader>

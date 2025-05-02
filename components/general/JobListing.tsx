@@ -1,8 +1,8 @@
-import { JobPostStatus } from "@prisma/client";
-import EmptyState from "./EmptyState";
 import { prisma } from "@/lib/prisma";
+import EmptyState from "./EmptyState";
 import JobCard from "./JobCard";
 import { PaginationComponent } from "./PaginationComponent";
+import { JobPostStatus } from "@prisma/client";
 
 async function getJobs(
   page: number = 1,
@@ -61,7 +61,7 @@ async function getJobs(
   };
 }
 
-export default async function JobListing({
+export default async function JobListings({
   currentPage,
   jobTypes,
   location,

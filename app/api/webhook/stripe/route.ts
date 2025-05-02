@@ -1,3 +1,4 @@
+// import { prisma } from "@/app/utils/db";
 import { stripe } from "@/app/utils/stripe";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
@@ -33,35 +34,21 @@ export async function POST(req: Request) {
       return new Response("No job ID found", { status: 400 });
     }
 
-    // const user = await prisma.user.findUnique({
-    //   where: {
-    //     stripeCustomerId: customerId,
-    //   },
-    // });
-
-    // if (!user) throw new Error("User not found...");
-
-    const company = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         stripeCustomerId: customerId,
       },
-      select: {
-        company: {
-          select: {
-            id: true,
-          },
-        },
-      },
     });
-    if (!company) {
-      return new Response("No company found for user", { status: 400 });
-    }
+
+    if (!user) throw new Error("User not found...");
 
     // Update the job post status to PUBLISHED
     await prisma.jobPost.update({
       where: {
         id: jobId,
-        companyId: company?.company?.id as string, // Ensure the job belongs to the user
+        company: {
+          userId: user.id, // Check that the job's company belongs to the upser
+        },
       },
       data: {
         status: "ACTIVE",

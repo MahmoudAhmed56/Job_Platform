@@ -123,7 +123,7 @@ model JobPost {
   listingDuration Int
   benefits        String[]
 
-  status       JobPostStatus @default(DRAFT)
+  status       JobPostStatus @default(ACTIVE)
   applications Int           @default(0)
 
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)

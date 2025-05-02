@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { jobSchema } from "@/lib/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+
+import { countryList } from "@/app/utils/countriesList";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
@@ -23,19 +20,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { countryList } from "@/app/utils/countriesList";
-import SalaryRangeSelector from "../general/SalaryRangeSelector";
+import { Textarea } from "../ui/textarea";
+import { XIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import Image from "next/image";
+import { toast } from "sonner";
+import { UploadDropzone } from "../general/UploadThingReExport";
+import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import JobDescriptionEditor from "../richTextEditor/JobDescriptionEditor";
 import BenefitsSelector from "../general/BenefitsSelector";
-import Image from "next/image";
-import { Button } from "../ui/button";
-import { XIcon } from "lucide-react";
-import { toast } from "sonner";
-import { Textarea } from "../ui/textarea";
-import { UploadDropzone } from "../general/UploadThingReExport";
-import JobListingDurationSelector from "../general/JobListingDurationSelector";
-import { useState } from "react";
 import { createJob } from "@/app/actions";
+import SalaryRangeSelector from "../general/SalaryRangeSelector";
+import JobListingDurationSelector from "../general/JobListingDurationSelector";
+import { jobSchema } from "@/lib/validation";
+import { redirect } from "next/navigation";
 
 interface CreateJobFormProps {
   companyName: string;
@@ -46,14 +47,14 @@ interface CreateJobFormProps {
   companyWebsite: string;
 }
 
-const CreateJobForm = ({
+export function CreateJobForm({
   companyAbout,
   companyLocation,
   companyLogo,
   companyXAccount,
   companyName,
   companyWebsite,
-}: CreateJobFormProps) => {
+}: CreateJobFormProps) {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
@@ -73,7 +74,8 @@ const CreateJobForm = ({
       listingDuration: 30,
     },
   });
-  const [pending, setPending] = useState<boolean>(false);
+
+  const [pending, setPending] = useState(false);
   async function onSubmit(values: z.infer<typeof jobSchema>) {
     try {
       setPending(true);
@@ -82,6 +84,7 @@ const CreateJobForm = ({
       toast.error("Something went wrong. Please try again.");
     } finally {
       setPending(false);
+      redirect("/")
     }
   }
   return (
@@ -134,11 +137,13 @@ const CreateJobForm = ({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
             <div className="grid md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -185,8 +190,8 @@ const CreateJobForm = ({
                 <FormControl>
                   <SalaryRangeSelector
                     control={form.control}
-                    minSalary={2000}
-                    maxSalary={200000}
+                    minSalary={30000}
+                    maxSalary={1000000}
                   />
                 </FormControl>
                 <FormMessage>
@@ -195,6 +200,7 @@ const CreateJobForm = ({
                 </FormMessage>
               </FormItem>
             </div>
+
             <FormField
               control={form.control}
               name="jobDescription"
@@ -202,12 +208,13 @@ const CreateJobForm = ({
                 <FormItem>
                   <FormLabel>Job Description</FormLabel>
                   <FormControl>
-                    <JobDescriptionEditor field={field as any} />
+                    <JobDescriptionEditor field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="benefits"
@@ -215,7 +222,7 @@ const CreateJobForm = ({
                 <FormItem>
                   <FormLabel>Benefits</FormLabel>
                   <FormControl>
-                    <BenefitsSelector field={field as any} />
+                    <BenefitsSelector field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -223,6 +230,7 @@ const CreateJobForm = ({
             />
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Company Information</CardTitle>
@@ -378,7 +386,6 @@ const CreateJobForm = ({
                         </div>
                       ) : (
                         <UploadDropzone
-                          className="cursor-pointer"
                           endpoint="imageUploader"
                           onClientUploadComplete={(res) => {
                             field.onChange(res[0].ufsUrl);
@@ -399,6 +406,7 @@ const CreateJobForm = ({
             />
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Job Listing Duration</CardTitle>
@@ -419,27 +427,9 @@ const CreateJobForm = ({
           </CardContent>
         </Card>
         <Button type="submit" className="w-full" disabled={pending}>
-          {pending ? "Submitting..." : "Create Job Post"}
+          {pending ? "Submitting..." : "Continue"}
         </Button>
-        {Object.keys(form.formState.errors).length > 0 && (
-          <div className="rounded-lg bg-destructive/10 p-4 text-destructive dark:bg-destructive/20">
-            <h3 className="mb-2 font-medium">
-              Please fix the following errors:
-            </h3>
-            <ul className="list-disc space-y-1 pl-4">
-              {Object.entries(form.formState.errors).map(
-                ([fieldName, error]) => (
-                  <li key={fieldName}>
-                    {error.message?.toString() || `Invalid ${fieldName}`}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-        )}
       </form>
     </Form>
   );
-};
-
-export default CreateJobForm;
+}
