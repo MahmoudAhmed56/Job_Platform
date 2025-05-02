@@ -1,43 +1,87 @@
-import { prisma } from "@/lib/prisma";
+import { JobPostStatus } from "@prisma/client";
 import EmptyState from "./EmptyState";
+import { prisma } from "@/lib/prisma";
 import JobCard from "./JobCard";
+import { PaginationComponent } from "./PaginationComponent";
 
-async function getData() {
-  const data = await prisma.jobPost.findMany({
-    where: {
-      status: "ACTIVE",
-    },
-    select: {
-      jobTitle: true,
-      id: true,
-      salaryFrom: true,
-      salaryTo: true,
-      employmentType: true,
-      location: true,
-      createdAt: true,
-      company: {
-        select: {
-          name: true,
-          logo: true,
-          location: true,
-          about: true,
+async function getJobs(
+  page: number = 1,
+  pageSize: number = 10,
+  jobTypes: string[] = [],
+  location: string = ""
+) {
+  const skip = (page - 1) * pageSize;
+
+  const where = {
+    status: JobPostStatus.ACTIVE,
+    ...(jobTypes.length > 0 && {
+      employmentType: {
+        in: jobTypes,
+      },
+    }),
+    ...(location &&
+      location !== "worldwide" && {
+        location: location,
+      }),
+  };
+
+  const [data, totalCount] = await Promise.all([
+    prisma.jobPost.findMany({
+      skip,
+      take: pageSize,
+      where,
+      select: {
+        jobTitle: true,
+        id: true,
+        salaryFrom: true,
+        salaryTo: true,
+        employmentType: true,
+        location: true,
+        createdAt: true,
+        company: {
+          select: {
+            name: true,
+            logo: true,
+            location: true,
+            about: true,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return data;
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    prisma.jobPost.count({ where }),
+  ]);
+
+  return {
+    jobs: data,
+    totalPages: Math.ceil(totalCount / pageSize),
+    currentPage: page,
+  };
 }
-const JobListing = async () => {
-  const data = await getData();
+
+export default async function JobListing({
+  currentPage,
+  jobTypes,
+  location,
+}: {
+  currentPage: number;
+  jobTypes: string[];
+  location: string;
+}) {
+  const {
+    jobs,
+    totalPages,
+    currentPage: page,
+  } = await getJobs(currentPage, 7, jobTypes, location);
+
   return (
     <>
-      {data.length > 0 ? (
+      {jobs.length > 0 ? (
         <div className="flex flex-col gap-6">
-          {data.map((job) => (
-            <JobCard job={job} key={job.id} />
+          {jobs.map((job, index) => (
+            <JobCard job={job} key={index} />
           ))}
         </div>
       ) : (
@@ -48,8 +92,10 @@ const JobListing = async () => {
           href="/"
         />
       )}
+
+      <div className="flex justify-center mt-6">
+        <PaginationComponent totalPages={totalPages} currentPage={page} />
+      </div>
     </>
   );
-};
-
-export default JobListing;
+}
